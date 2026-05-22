@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide Chiot 3-12 mois · Dogs & Us</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1e3a5f;
+  --coral:#e05a3a;
+  --coral-light:#fdf0ec;
+  --cream:#faf9f5;
+  --green:#4a8c3f;
+  --green-light:#eaf4e8;
+  --gold:#f5a623;
+  --border-r:14px;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--cream);font-family:var(--font);color:var(--navy);min-height:100vh}
+
+.wrap{max-width:640px;margin:0 auto;padding:0 0 4rem}
+
+/* HERO */
+.hero{text-align:center;padding:2rem 1rem 1.25rem;position:relative}
+.hero-brand{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #e8e4dc;border-radius:30px;padding:5px 14px 5px 10px;margin-bottom:14px}
+.hero-brand span{font-size:12px;font-weight:700;color:var(--navy);letter-spacing:0.04em}
+.hero h1{font-size:clamp(22px,5vw,28px);font-weight:800;color:var(--navy);line-height:1.2;margin-bottom:8px}
+.hero h1 em{color:var(--coral);font-style:normal}
+.hero p{font-size:14px;color:#666;max-width:400px;margin:0 auto;line-height:1.6}
+
+/* GLOBAL PROGRESS */
+.gpw{background:#fff;border:1.5px solid #e8e4dc;border-radius:var(--border-r);padding:.9rem 1.1rem;margin:1rem;margin-bottom:1rem}
+.gpw-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px}
+.gpw-top span{font-size:12px;color:var(--navy);font-weight:600;line-height:1.3}
+.gpw-top .xp{font-size:12px;color:var(--gold);font-weight:700;white-space:nowrap}
+.prog-track{background:#f0ede6;border-radius:20px;height:9px;overflow:hidden}
+.prog-fill{background:linear-gradient(90deg,var(--coral),var(--gold));height:9px;border-radius:20px;transition:width .5s cubic-bezier(.34,1.56,.64,1)}
+.prog-steps{display:flex;justify-content:space-between;margin-top:5px}
+.prog-dot{width:9px;height:9px;border-radius:50%;background:#e0dbd0;border:2px solid #fff;transition:background .3s;flex-shrink:0}
+.prog-dot.done{background:var(--coral)}
+
+/* MONTH PILLS */
+.month-nav{display:flex;gap:6px;padding:0 1rem 1rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;justify-content:flex-start}
+.month-nav::-webkit-scrollbar{display:none}
+.mpill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;background:#fff;border:1.5px solid #e0dbd0;border-radius:12px;padding:7px 10px;cursor:pointer;transition:all .18s;min-width:58px;-webkit-tap-highlight-color:transparent}
+.mpill .pem{font-size:17px}
+.mpill .plbl{font-size:10px;font-weight:700;color:#999;white-space:nowrap}
+.mpill .pdots{display:flex;gap:2px;margin-top:2px}
+.mpill .pdot{width:4px;height:4px;border-radius:50%;background:#e0dbd0}
+.mpill .pdot.on{background:var(--coral)}
+.mpill.active{border-color:var(--navy);background:var(--navy)}
+.mpill.active .plbl{color:#fff}
+.mpill.done{border-color:var(--green)}
+.mpill.done .plbl{color:var(--green)}
+
+/* CARD */
+.month-card{display:none;padding:0 1rem}
+.month-card.visible{display:block}
+.card{background:#fff;border-radius:var(--border-r);border:1.5px solid #e8e4dc;padding:1.25rem;margin-bottom:.875rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--coral)}
+
+/* MONTH HEADER */
+.mhero{display:flex;gap:12px;align-items:flex-start;margin-bottom:1.1rem}
+.mhero-icon{width:46px;height:46px;min-width:46px;border-radius:12px;background:var(--coral-light);display:flex;align-items:center;justify-content:center;font-size:24px}
+.mhero-text h2{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:2px;line-height:1.3}
+.mage{display:inline-block;background:var(--navy);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-bottom:4px;letter-spacing:.05em}
+.mhero-text p{font-size:12px;color:#666;line-height:1.5}
+
+/* SECTION LABEL */
+.slabel{font-size:9px;font-weight:800;letter-spacing:.1em;color:#bbb;text-transform:uppercase;margin-bottom:7px;margin-top:1.1rem;display:flex;align-items:center;gap:6px}
+.slabel::after{content:'';flex:1;height:1px;background:#f0ede6}
+
+/* OBJECTIVES */
+.obj-list{display:flex;flex-direction:column;gap:6px}
+.obj-item{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--navy);line-height:1.5}
+.obj-check{width:16px;height:16px;min-width:16px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px}
+
+/* EXERCISES */
+.exo-list{display:flex;flex-direction:column;gap:7px}
+.exo-item{background:#f9f8f4;border:1.5px solid #ece9e1;border-radius:11px;overflow:hidden;transition:border-color .2s}
+.exo-item.open{border-color:#b8d4b5}
+.exo-head{display:flex;align-items:center;gap:9px;padding:11px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;user-select:none}
+.exo-head:active{background:#f0ede6}
+.exo-item.open .exo-head{background:var(--green-light)}
+.exo-num{width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.exo-item.open .exo-num{background:var(--green)}
+.exo-title{flex:1;font-size:13px;font-weight:600;color:var(--navy);line-height:1.3}
+.exo-item.open .exo-title{color:var(--green)}
+.exo-toggle{display:flex;align-items:center;gap:4px;background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;flex-shrink:0;transition:all .2s;white-space:nowrap}
+.exo-item.open .exo-toggle{background:var(--green)}
+.exo-arrow{display:inline-block;transition:transform .25s;font-style:normal;font-size:10px}
+.exo-item.open .exo-arrow{transform:rotate(180deg)}
+.exo-body{padding:0 12px 12px 43px;font-size:12px;color:#555;line-height:1.65;display:none}
+.exo-body.open{display:block}
+.exo-tip{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:6px 9px;margin-top:8px;font-size:11px;color:var(--green);font-weight:500;line-height:1.5}
+
+/* CTA BANNER */
+.cta-banner{background:var(--navy);border-radius:var(--border-r);padding:1.1rem;margin-top:1.25rem;margin-bottom:.875rem;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.cta-banner::after{content:'🐾';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:40px;opacity:0.08;pointer-events:none}
+.ctag{font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--gold);text-transform:uppercase}
+.cta-question{font-size:13px;font-weight:800;color:#fff;line-height:1.4}
+.cta-desc{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5}
+.cta-btn{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:var(--navy);font-size:12px;font-weight:800;padding:9px 16px;border-radius:25px;border:none;cursor:pointer;align-self:flex-start;transition:transform .15s;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.cta-btn:active{transform:scale(.97)}
+
+/* CHECKLIST */
+.check-list{display:flex;flex-direction:column;gap:6px}
+.check-row{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;border:1.5px solid transparent;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.check-row:active{background:#faf9f5}
+.check-row.done{background:var(--green-light);border-color:#c5e0c0}
+.check-box{width:20px;height:20px;min-width:20px;border-radius:6px;border:2px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
+.check-row.done .check-box{background:var(--green);border-color:var(--green);color:#fff}
+.check-row label{font-size:12px;color:var(--navy);cursor:pointer;line-height:1.4}
+.check-row.done label{color:var(--green);text-decoration:line-through;text-decoration-color:var(--green)}
+
+/* LOCAL PROGRESS */
+.local-prog{margin-top:10px}
+.lp-bar{background:#f0ede6;border-radius:20px;height:6px;overflow:hidden}
+.lp-fill{height:6px;border-radius:20px;background:var(--green);transition:width .4s}
+.lp-label{display:flex;justify-content:space-between;margin-top:4px}
+.lp-label span{font-size:10px;color:#aaa}
+.lp-label strong{font-size:10px;color:var(--green);font-weight:700}
+
+/* NAV BUTTONS */
+.nav-row{display:flex;gap:8px;margin-top:.875rem}
+.nbtn{flex:1;padding:11px 12px;border-radius:11px;border:1.5px solid #e0dbd0;background:#fff;color:var(--navy);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.nbtn:active{background:#f5f3ef}
+.nbtn:disabled{opacity:.3;cursor:default}
+.nbtn.next{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* CELEBRATION */
+.confetti-wrap{text-align:center;padding:2rem 1rem;display:none}
+.confetti-wrap.visible{display:block}
+.confetti-big{font-size:48px;margin-bottom:10px}
+.confetti-wrap h2{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.confetti-wrap p{font-size:13px;color:#666;max-width:340px;margin:0 auto 1.25rem;line-height:1.6}
+.final-cta{display:inline-block;background:var(--coral);color:#fff;border:none;padding:13px 26px;border-radius:30px;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
+
+/* DESKTOP ENHANCEMENTS */
+@media(min-width:480px){
+  .hero{padding:2.5rem 1.5rem 1.5rem}
+  .hero h1{font-size:26px}
+  .card{padding:1.5rem}
+  .mhero-icon{width:52px;height:52px;min-width:52px;font-size:26px}
+  .mhero-text h2{font-size:17px}
+  .mhero-text p{font-size:13px}
+  .obj-item{font-size:13px}
+  .exo-title{font-size:13px}
+  .exo-body{font-size:13px}
+  .exo-tip{font-size:12px}
+  .cta-question{font-size:14px}
+  .cta-desc{font-size:12px}
+  .cta-btn{font-size:13px}
+  .check-row label{font-size:13px}
+  .month-nav{justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-brand">
+      <span style="font-size:17px">🐾</span>
+      <span>DOGS &amp; US · Guide gratuit</span>
+    </div>
+    <h1>Guide chiot<br><em>de 3 à 12 mois</em> 🐶</h1>
+    <p>Un parcours bienveillant, mois après mois. Coche tes réussites et rejoins l'Académie pour aller plus loin !</p>
+  </div>
+
+  <div class="gpw">
+    <div class="gpw-top">
+      <span id="gp-label">Progression · 0 / 18 validations</span>
+      <span class="xp" id="gp-xp">⭐ 0 XP</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="gp-bar" style="width:0%"></div></div>
+    <div class="prog-steps" id="gp-dots"></div>
+  </div>
+
+  <div class="month-nav" id="mnav"></div>
+  <div id="mcards"></div>
+
+  <div class="confetti-wrap" id="celebration">
+    <div class="confetti-big">🎉🐾🎊</div>
+    <h2>Bravo, vous avez tout validé !</h2>
+    <p>Votre chiot est en bonne voie pour devenir un chien adulte épanoui. La formation complète vous attend pour aller encore plus loin !</p>
+    <a class="final-cta" href="https://www.skool.com/lacademie-dogs-us-8505/classroom" target="_blank">🚀 Rejoindre la formation Dogs & Us</a>
+  </div>
+
+</div>
+
+<script>
+const SKOOL='https://www.skool.com/lacademie-dogs-us-8505/classroom';
+
+const months=[
+  {
+    label:"3 mois",emoji:"🐣",
+    title:"Installation & sécurité émotionnelle",
+    age:"Votre chiot vient d'arriver",
+    context:"La priorité : construire la confiance et installer une routine sécurisante.",
+    question:"Mon chiot mordille tout — mains, meubles, chevilles... comment l'arrêter ?",
+    ctaLabel:"Une vidéo complète sur ce sujet dans la formation",
+    ctaDesc:"Vidéos détaillées sur la propreté, la gestion des pleurs nocturnes et comment poser un cadre serein dès J1.",
+    objectives:["Découverte sereine des espaces et de la zone de repos","Acquisition progressive de la propreté","Apprentissage de l'inhibition de la morsure","Association positive avec son nom, le collier et la laisse","Socialisation humaine et stimulations douces"],
+    exercises:[
+      {title:"Jeu du regard",body:"Dites le nom de votre chiot d'une voix enjouée. Dès qu'il vous regarde → « Oui ! » + friandise. 2-3 minutes, plusieurs fois par jour.",tip:"Si le chiot ne réagit pas, baissez-vous à sa hauteur — vous êtes moins impressionnant !"},
+      {title:"Habituation au matériel",body:"Mettez le harnais juste avant le repas. Laissez la laisse traîner au sol sous surveillance pour qu'il s'y habitue sans tension.",tip:"Associez toujours le matériel à quelque chose de positif (jeu ou repas)."},
+      {title:"Sorties propreté",body:"Sortez le chiot après chaque repas, sieste ou jeu intense. Félicitez chaudement dès qu'il fait dehors. Accident ? Nettoyez hors de sa vue, sans gronder.",tip:"La régularité des sorties compte plus que les gronderies."},
+      {title:"Découverte du monde",body:"Assis sur un banc, observez le monde passer à distance. Récompensez son calme face aux vélos, gens et bruits.",tip:"La distance est votre meilleure alliée : ni trop près, ni trop loin."}
+    ],
+    checklist:["Le chiot répond à son nom et me regarde","Il accepte de porter son matériel sereinement","Il dort paisiblement dans sa zone de repos"]
+  },
+  {
+    label:"4 mois",emoji:"🧠",
+    title:"Repères de base & socialisation",
+    age:"Fenêtre d'or de la socialisation",
+    context:"Le chiot est très réceptif mais commence à tester ses limites. C'est LE moment d'installer les fondamentaux.",
+    question:"Mon chiot fait encore des pipis à la maison — pourquoi et comment y remédier ?",
+    ctaLabel:"Une vidéo complète sur ce sujet dans la formation",
+    ctaDesc:"Comprendre pourquoi ça dure et les étapes concrètes pour en finir avec les accidents à la maison.",
+    objectives:["Apprentissage des positions de base : Assis, Couché","Introduction au « pas bouger » pour de courtes durées","Début de la marche en laisse sans tirer","Rappel ludique en environnement calme","Habituation aux manipulations vétérinaires"],
+    exercises:[
+      {title:"L'Assis",body:"Friandise au-dessus du nez, reculez vers ses oreilles. Ses fesses touchent le sol → « Assis, oui ! » + friandise.",tip:"Ne répétez jamais le mot plusieurs fois. Une demande, une action."},
+      {title:"Rappel Ping-Pong",body:"À deux dans un couloir, appelez-le à tour de rôle avec enthousiasme. Utilisez un seul mot de rappel : son prénom pour attirer l'attention, puis la commande — ex : « Luna… viens ! ». Récompense jackpot à chaque arrivée !",tip:"Le rappel doit TOUJOURS être associé à quelque chose de positif. Jamais une gronderie."},
+      {title:"Marche en laisse",body:"Dès que la laisse se tend, arrêtez-vous. Attendez qu'il revienne vers vous, puis reprenez. Récompensez quand il marche près de vous.",tip:"La cohérence paie : 10 arrêts par balade au début, c'est normal !"},
+      {title:"Manipulations douces",body:"Pattes, oreilles, babines, queue. Touchez partout doucement + récompense à chaque fois.",tip:"Commencez dans un moment de calme, jamais quand il est excité."}
+    ],
+    checklist:["Il connaît Assis et Couché sans distraction","Il accepte d'être manipulé partout en douceur","Il patiente quelques secondes avant sa gamelle"]
+  },
+  {
+    label:"5 mois",emoji:"🌍",
+    title:"Consolidation & premiers défis",
+    age:"Curiosité et audace",
+    context:"Les dents de lait tombent. Idéal pour généraliser les apprentissages dans de nouveaux environnements.",
+    question:"Il mange tout ce qu'il trouve dans la rue — comment lui apprendre à ne pas ramasser ?",
+    ctaLabel:"Une vidéo complète sur ce sujet dans la formation",
+    ctaDesc:"Comment rendre un chiot fiable partout : gestion des distractions, exercices de flair et le protocole « tu laisses » en extérieur.",
+    objectives:["Généralisation des repères partout (jardin, rue, amis)","Rappel en extérieur avec longe de 5 à 10m","Apprentissage du « Lâche » et du « Donne »","Jeux de flair pour la dépense mentale","Retour au calme après l'excitation"],
+    exercises:[
+      {title:"Tu laisses / Pas toucher",body:"Friandise dans la main fermée. Le chiot renifle, insiste... Dès qu'il recule son nez → « Oui ! » + friandise de l'autre main.",tip:"C'est la base de toute la gestion des distractions en promenade !"},
+      {title:"Le Donne en jouant",body:"Deux jouets identiques. Il a l'un → proposez l'autre en disant « Donne ». Il lâche → félicitez !",tip:"Ne jamais tirer pour reprendre un objet — ça devient un jeu de force !"},
+      {title:"Jeux de flair",body:"Cachez des friandises dans le salon pendant qu'il patiente, puis dites « Cherche ! ». Épuisant mentalement, apaisant naturellement.",tip:"5 minutes de flair = 30 minutes de balade pour la fatigue mentale."},
+      {title:"Bouton On/Off",body:"Jouez intensément quelques secondes, puis immobilisez le jouet contre vous. Dès qu'il relâche → relancez !",tip:"Ce réflexe sera précieux toute sa vie pour redescendre l'excitation."}
+    ],
+    checklist:["Il répond à ses repères de base en extérieur calme","Il lâche un objet en échange d'une récompense","Il revient au calme après un jeu excitant"]
+  },
+  {
+    label:"6 mois",emoji:"🔥",
+    title:"Entrée dans l'adolescence",
+    age:"Les premières rébellions !",
+    context:"Votre chiot peut tester vos limites et paraître distrait. C'est neurologique, pas de la mauvaise volonté.",
+    question:"Trop d'énergie, il n'écoute plus rien — comment retrouver son attention ?",
+    ctaLabel:"Une vidéo complète sur ce sujet dans la formation",
+    ctaDesc:"Un module dédié à cette période + des lives hebdo pour répondre à vos questions en direct avec Chloé.",
+    objectives:["Maintien rigoureux des acquis de base","Renforcement du rappel dans la joie","Tricks ludiques pour la dépense mentale","Marche en laisse en ville avec distractions","Prévenir la protection de ressources"],
+    exercises:[
+      {title:"Rappel renforcé en longe",body:"Longe 10m, laissez-le s'éloigner. Appelez-le joyeusement et reculez en courant quand il amorce le retour. Accueil enthousiaste + récompense de grande valeur.",tip:"Ne rappelez jamais pour quelque chose de déplaisant."},
+      {title:"Tricks complices",body:"Tourner, faire le beau, rouler, donner la patte, cible main... Ces tricks renforcent votre lien et offrent une dépense mentale sans pression.",tip:"1 trick = 5 minutes de travail max. La légèreté est la clé."},
+      {title:"Prévenir la protection de ressources",body:"Ne grondez jamais votre chien qui mange. Passez à côté et glissez un morceau de poulet dans sa gamelle : votre approche = événement positif.",tip:"La protection de ressources se prévient, elle se soigne beaucoup moins facilement."}
+    ],
+    checklist:["Il se laisse approcher sereinement quand il mange","Le rappel en longe s'améliore de balade en balade","On partage des moments ludiques régulièrement"]
+  },
+  {
+    label:"7-8 mois",emoji:"⚓",
+    title:"Adolescence pleine — tenir le cap",
+    age:"Le tunnel de l'ado",
+    context:"Le chien semble sourd, son attention captée par tout. Tenir le cap avec bienveillance et répéter.",
+    question:"Il tire énormément en laisse — comment le faire marcher calmement ?",
+    ctaLabel:"Une vidéo complète sur ce sujet dans la formation",
+    ctaDesc:"Protocole complet anti-tireur + analyse vidéo de vos séances par Chloé dans l'espace communauté.",
+    objectives:["Maintien structuré des repères sans exigences nouvelles","Utilisation du « tu laisses » en promenade","Enrichissement mental pour canaliser l'énergie","Gestion bienveillante de la réactivité naissante"],
+    exercises:[
+      {title:"Patience avant la promenade",body:"Prenez la laisse → s'il s'agite, reposez-la. Répétez jusqu'à ce qu'il soit calme. Attachez-le uniquement quand il est posé.",tip:"Cette routine quotidienne enseigne que l'agitation bloque la sortie."},
+      {title:"Se recentrer (tu laisses)",body:"Il fixe un chien et veut tirer → « tu laisses ». Dès qu'il se retourne vers vous → grand « Oui ! » + récompense généreuse.",tip:"Si c'est trop dur, augmentez la distance. La distance = votre meilleure alliée."},
+      {title:"Enrichissement mental",body:"Remplacez la gamelle par un tapis de fouille ou un Kong congelé. Fatiguer le mental évite la suractivité physique.",tip:"Un chien mentalement fatigué est un chien calme."}
+    ],
+    checklist:["Il se recentre face aux distractions","Il tolère l'attente avant la promenade","J'arrive à l'accompagner sereinement en balade"]
+  },
+  {
+    label:"9-12 mois",emoji:"🌟",
+    title:"Stabilisation — bien dans ses pattes",
+    age:"La lumière au bout du tunnel !",
+    context:"Le chien sort progressivement de l'adolescence. Il est plus mature, plus posé. Les apprentissages s'ancrent.",
+    question:"Vous avez encore un problème avec votre chien ?",
+    ctaLabel:"Posez votre question directement à Chloé dans la formation",
+    ctaDesc:"Votre chien a grandi et vous avez fait un travail incroyable. Rejoignez l'Académie pour continuer l'aventure !",
+    objectives:["Généralisation complète dans tous les environnements","Rappel sans laisse en espace sécurisé","Politesse en société (vétérinaire, terrasse, invités)","Activités de loisir : nosework, balades sportives","Bilan : un chien adulte bien dans ses pattes"],
+    exercises:[
+      {title:"Enchaînements fluides",body:"Assis → Couché → Trick amusant → récompense finale. L'éducation devient un jeu naturel au quotidien.",tip:"Incorporez les repères dans le quotidien : avant de traverser, avant d'ouvrir la porte."},
+      {title:"Politesse urbaine",body:"« Pas bouger » avant de traverser. Attendre tranquillement devant une vitrine. La politesse est devenue un automatisme naturel.",tip:"Félicitez chaque initiative calme spontanée — c'est l'or de cette période !"},
+      {title:"Jeux de flair en forêt",body:"Cachez son jouet préféré derrière un arbre en balade. L'éducation continue toute sa vie, sous forme de jeu.",tip:"Le nosework est une activité extraordinaire pour les chiens de tous âges."}
+    ],
+    checklist:["Les repères de base sont des automatismes","Il est à l'aise et calme dans la majorité des situations","Nous avons un vrai langage commun 🥹"]
+  }
+];
+
+let current=0;
+const checks=months.map(m=>m.checklist.map(()=>false));
+const exoOpen=months.map(m=>m.exercises.map(()=>false));
+
+const totalChecks=()=>checks.flat().filter(Boolean).length;
+const totalAll=()=>checks.flat().length;
+const monthChecks=i=>checks[i].filter(Boolean).length;
+
+function updateGlobal(){
+  const done=totalChecks(),total=totalAll();
+  const pct=Math.round(done/total*100);
+  document.getElementById('gp-bar').style.width=pct+'%';
+  document.getElementById('gp-label').textContent='Progression · '+done+' / '+total+' validations';
+  document.getElementById('gp-xp').textContent='⭐ '+(done*10)+' XP';
+  const dots=document.getElementById('gp-dots');
+  dots.innerHTML='';
+  months.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='prog-dot'+(monthChecks(i)===months[i].checklist.length?' done':'');
+    dots.appendChild(d);
+  });
+  if(done===total) document.getElementById('celebration').classList.add('visible');
+}
+
+function renderNav(){
+  const nav=document.getElementById('mnav');
+  nav.innerHTML='';
+  months.forEach((m,i)=>{
+    const allDone=monthChecks(i)===m.checklist.length;
+    const el=document.createElement('div');
+    el.className='mpill'+(i===current?' active':'')+(allDone?' done':'');
+    const dotHtml=m.checklist.map((_,ci)=>`<div class="pdot${checks[i][ci]?' on':''}"></div>`).join('');
+    el.innerHTML=`<span class="pem">${m.emoji}</span><span class="plbl">${m.label}</span><div class="pdots">${dotHtml}</div>`;
+    el.onclick=()=>{current=i;render();};
+    nav.appendChild(el);
+  });
+  // scroll active pill into view
+  setTimeout(()=>{
+    const active=nav.querySelector('.active');
+    if(active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },50);
+}
+
+function renderCards(){
+  const wrap=document.getElementById('mcards');
+  wrap.innerHTML='';
+  months.forEach((m,i)=>{
+    const div=document.createElement('div');
+    div.className='month-card'+(i===current?' visible':'');
+    const done=monthChecks(i),total=m.checklist.length;
+    const pct=Math.round(done/total*100);
+
+    div.innerHTML=`
+      <div class="card">
+        <div class="mhero">
+          <div class="mhero-icon">${m.emoji}</div>
+          <div class="mhero-text">
+            <span class="mage">${m.age.toUpperCase()}</span>
+            <h2>${m.title}</h2>
+            <p>${m.context}</p>
+          </div>
+        </div>
+
+        <div class="slabel">Objectifs du mois</div>
+        <div class="obj-list">${m.objectives.map(o=>`<div class="obj-item"><div class="obj-check">✓</div><span>${o}</span></div>`).join('')}</div>
+
+        <div class="slabel">Exercices clés</div>
+        <div class="exo-list">${m.exercises.map((e,ei)=>`
+          <div class="exo-item${exoOpen[i][ei]?' open':''}" data-mi="${i}" data-ei="${ei}">
+            <div class="exo-head">
+              <div class="exo-num">${ei+1}</div>
+              <span class="exo-title">${e.title}</span>
+              <span class="exo-toggle">${exoOpen[i][ei]?'Fermer':"Voir"}<em class="exo-arrow"> ▼</em></span>
+            </div>
+            <div class="exo-body${exoOpen[i][ei]?' open':''}">
+              ${e.body}
+              ${e.tip?`<div class="exo-tip">💡 ${e.tip}</div>`:''}
+            </div>
+          </div>
+        `).join('')}</div>
+
+        <div class="cta-banner">
+          <span class="ctag">🎓 Formation Dogs & Us</span>
+          <span class="cta-question">❓ ${m.question}</span>
+          <span class="cta-desc">${m.ctaDesc}</span>
+          <a class="cta-btn" href="${SKOOL}" target="_blank">🎬 ${m.ctaLabel} →</a>
+        </div>
+
+        <div class="slabel">Valide tes acquis !</div>
+        <div class="check-list">${m.checklist.map((c,ci)=>`
+          <div class="check-row${checks[i][ci]?' done':''}" data-mi="${i}" data-ci="${ci}">
+            <div class="check-box">${checks[i][ci]?'✓':''}</div>
+            <label>${c}</label>
+          </div>
+        `).join('')}</div>
+
+        <div class="local-prog">
+          <div class="lp-bar"><div class="lp-fill" style="width:${pct}%"></div></div>
+          <div class="lp-label"><span>${done}/${total} acquis ce mois</span><strong>${pct}%</strong></div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nbtn" id="prev-${i}" ${i===0?'disabled':''}>← Précédent</button>
+          <button class="nbtn next" id="next-${i}" ${i===months.length-1?'disabled':''}>Suivant →</button>
+        </div>
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+
+  document.querySelectorAll('.exo-item').forEach(item=>{
+    item.querySelector('.exo-head').addEventListener('click',()=>{
+      const mi=+item.dataset.mi,ei=+item.dataset.ei;
+      exoOpen[mi][ei]=!exoOpen[mi][ei];
+      render();
+    });
+  });
+
+  document.querySelectorAll('.check-row').forEach(row=>{
+    row.addEventListener('click',()=>{
+      const mi=+row.dataset.mi,ci=+row.dataset.ci;
+      checks[mi][ci]=!checks[mi][ci];
+      render();
+    });
+  });
+
+  for(let i=0;i<months.length;i++){
+    const p=document.getElementById('prev-'+i);
+    const n=document.getElementById('next-'+i);
+    if(p&&!p.disabled) p.onclick=()=>{current--;render();window.scrollTo({top:0,behavior:'smooth'});};
+    if(n&&!n.disabled) n.onclick=()=>{current++;render();window.scrollTo({top:0,behavior:'smooth'});};
+  }
+}
+
+function render(){
+  renderNav();
+  renderCards();
+  updateGlobal();
+}
+
+render();
+</script>
+</body>
+</html>
