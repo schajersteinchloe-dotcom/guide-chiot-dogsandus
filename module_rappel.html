@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Rappel étape par étape · Dogs & Us</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1e3a5f;
+  --coral:#e05a3a;
+  --coral-light:#fdf0ec;
+  --cream:#faf9f5;
+  --green:#4a8c3f;
+  --green-light:#eaf4e8;
+  --gold:#f5a623;
+  --border-r:14px;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--cream);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--navy);min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:0 0 4rem}
+
+.hero{text-align:center;padding:2rem 1rem 1.25rem}
+.hero-brand{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #e8e4dc;border-radius:30px;padding:5px 14px 5px 10px;margin-bottom:14px}
+.hero-brand span{font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.04em}
+.hero h1{font-size:clamp(20px,5vw,26px);font-weight:800;color:var(--navy);line-height:1.2;margin-bottom:8px}
+.hero h1 em{color:var(--coral);font-style:normal}
+.hero p{font-size:13px;color:#666;max-width:400px;margin:0 auto;line-height:1.6}
+
+.gpw{background:#fff;border:1.5px solid #e8e4dc;border-radius:var(--border-r);padding:.9rem 1.1rem;margin:0 1rem 1rem}
+.gpw-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px}
+.gpw-top span{font-size:12px;color:var(--navy);font-weight:600;line-height:1.3}
+.gpw-top .xp{font-size:12px;color:var(--gold);font-weight:700;white-space:nowrap}
+.prog-track{background:#f0ede6;border-radius:20px;height:9px;overflow:hidden}
+.prog-fill{background:linear-gradient(90deg,var(--coral),var(--gold));height:9px;border-radius:20px;transition:width .5s cubic-bezier(.34,1.56,.64,1)}
+.prog-steps{display:flex;justify-content:space-between;margin-top:5px}
+.prog-dot{width:9px;height:9px;border-radius:50%;background:#e0dbd0;border:2px solid #fff;transition:background .3s}
+.prog-dot.done{background:var(--coral)}
+
+.step-nav{display:flex;gap:6px;padding:0 1rem 1.25rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.step-nav::-webkit-scrollbar{display:none}
+.spill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;background:#fff;border:1.5px solid #e0dbd0;border-radius:12px;padding:7px 10px;cursor:pointer;transition:all .18s;min-width:64px;-webkit-tap-highlight-color:transparent;text-align:center}
+.spill .sem{font-size:16px}
+.spill .slbl{font-size:10px;font-weight:700;color:#999;white-space:nowrap;line-height:1.3}
+.spill.active{border-color:var(--navy);background:var(--navy)}
+.spill.active .slbl{color:#fff}
+.spill.done{border-color:var(--green)}
+.spill.done .slbl{color:var(--green)}
+
+.step-card{display:none;padding:0 1rem}
+.step-card.visible{display:block}
+.card{background:#fff;border-radius:var(--border-r);border:1.5px solid #e8e4dc;padding:1.25rem;margin-bottom:.875rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--coral)}
+
+.shero{display:flex;gap:11px;align-items:flex-start;margin-bottom:1rem}
+.shero-icon{width:46px;height:46px;min-width:46px;border-radius:12px;background:var(--coral-light);display:flex;align-items:center;justify-content:center;font-size:23px}
+.shero-text h2{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:3px;line-height:1.3}
+.stag{display:inline-block;background:var(--navy);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-bottom:4px;letter-spacing:.05em}
+.shero-text p{font-size:12px;color:#666;line-height:1.5}
+
+.slabel{font-size:9px;font-weight:800;letter-spacing:.1em;color:#bbb;text-transform:uppercase;margin-bottom:7px;margin-top:1.1rem;display:flex;align-items:center;gap:6px}
+.slabel::after{content:'';flex:1;height:1px;background:#f0ede6}
+
+.env-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.env-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid}
+.env-badge.maison{background:#f0f4f8;border-color:#c5d8f0;color:var(--navy)}
+.env-badge.exterieur{background:var(--green-light);border-color:#b8d4b5;color:var(--green)}
+.env-badge.stimuli{background:#fff8ec;border-color:#f5d89a;color:#7a5c1a}
+
+.info-box{background:#f0f4f8;border-left:3px solid var(--navy);border-radius:0 10px 10px 0;padding:.85rem 1rem;margin-bottom:.875rem;font-size:12px;color:var(--navy);line-height:1.6}
+
+.rules-grid{display:flex;flex-direction:column;gap:7px}
+.rule-item{display:flex;gap:10px;align-items:flex-start;background:#f9f8f4;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--navy);line-height:1.5}
+.rule-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+
+.exo-list{display:flex;flex-direction:column;gap:7px}
+.exo-item{background:#f9f8f4;border:1.5px solid #ece9e1;border-radius:11px;overflow:hidden;transition:border-color .2s}
+.exo-item.open{border-color:#b8d4b5}
+.exo-head{display:flex;align-items:center;gap:9px;padding:12px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;user-select:none;min-height:48px}
+.exo-head:active{background:#f0ede6}
+.exo-item.open .exo-head{background:var(--green-light)}
+.exo-num{width:24px;height:24px;min-width:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.exo-item.open .exo-num{background:var(--green)}
+.exo-title{flex:1;font-size:12px;font-weight:600;color:var(--navy);line-height:1.3}
+.exo-item.open .exo-title{color:var(--green)}
+.exo-toggle{display:flex;align-items:center;gap:4px;background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:5px 10px;border-radius:20px;flex-shrink:0;transition:all .2s;white-space:nowrap;min-height:28px}
+.exo-item.open .exo-toggle{background:var(--green)}
+.exo-arrow{display:inline-block;transition:transform .25s;font-style:normal;font-size:10px}
+.exo-item.open .exo-arrow{transform:rotate(180deg)}
+.exo-body{padding:0 12px 12px 45px;font-size:12px;color:#555;line-height:1.65;display:none}
+.exo-body.open{display:block}
+.exo-tip{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:6px 9px;margin-top:8px;font-size:11px;color:var(--green);font-weight:500;line-height:1.5}
+
+.exo-check-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 0 0;border-top:1px solid #e8e4dc;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:36px}
+.exo-check-box{width:20px;height:20px;min-width:20px;border-radius:5px;border:2px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s}
+.exo-check-row.done .exo-check-box{background:var(--green);border-color:var(--green);color:#fff}
+.exo-check-row label{font-size:11px;color:#888;cursor:pointer;line-height:1.3}
+.exo-check-row.done label{color:var(--green);text-decoration:line-through}
+
+.local-prog{margin-top:10px}
+.lp-bar{background:#f0ede6;border-radius:20px;height:6px;overflow:hidden}
+.lp-fill{height:6px;border-radius:20px;background:var(--green);transition:width .4s}
+.lp-label{display:flex;justify-content:space-between;margin-top:4px}
+.lp-label span{font-size:10px;color:#aaa}
+.lp-label strong{font-size:10px;color:var(--green);font-weight:700}
+
+.cta-banner{background:var(--navy);border-radius:var(--border-r);padding:1.1rem;margin-top:1.25rem;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.cta-banner::after{content:'🐾';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:40px;opacity:.08;pointer-events:none}
+.ctag{font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--gold);text-transform:uppercase}
+.cta-title{font-size:13px;font-weight:800;color:#fff;line-height:1.4}
+.cta-desc{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5}
+.cta-btn{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:var(--navy);font-size:12px;font-weight:800;padding:10px 16px;border-radius:25px;border:none;cursor:pointer;align-self:flex-start;text-decoration:none;-webkit-tap-highlight-color:transparent;min-height:40px}
+.cta-btn:active{opacity:.9}
+
+.nav-row{display:flex;gap:8px;margin-top:.875rem}
+.nbtn{flex:1;padding:12px 12px;border-radius:11px;border:1.5px solid #e0dbd0;background:#fff;color:var(--navy);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;min-height:44px}
+.nbtn:active{background:#f5f3ef}
+.nbtn:disabled{opacity:.3;cursor:default}
+.nbtn.next{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+.confetti-wrap{text-align:center;padding:2rem 1rem;display:none}
+.confetti-wrap.visible{display:block}
+.confetti-big{font-size:48px;margin-bottom:10px}
+.confetti-wrap h2{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.confetti-wrap p{font-size:13px;color:#666;max-width:340px;margin:0 auto 1.25rem;line-height:1.6}
+.final-cta{display:inline-block;background:var(--coral);color:#fff;border:none;padding:13px 26px;border-radius:30px;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
+
+@media(min-width:480px){
+  .hero{padding:2.5rem 1.5rem 1.5rem}
+  .card{padding:1.5rem}
+  .shero-icon{width:50px;height:50px;font-size:25px}
+  .shero-text h2{font-size:17px}
+  .shero-text p,.exo-body,.rule-item{font-size:13px}
+  .exo-title{font-size:13px}
+  .step-nav{justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <div class="hero-brand">
+    <span style="font-size:17px">🐾</span>
+    <span>DOGS &amp; US · Module gratuit</span>
+  </div>
+  <h1>Le rappel<br><em>étape par étape</em> 🐕</h1>
+  <p>Apprends à ton chien à revenir vers toi — à la maison d'abord, puis dehors avec les stimuli.</p>
+</div>
+
+<div class="gpw">
+  <div class="gpw-top">
+    <span id="gp-label">Progression · 0 / 9 exercices</span>
+    <span class="xp" id="gp-xp">⭐ 0 XP</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="gp-bar" style="width:0%"></div></div>
+  <div class="prog-steps" id="gp-dots"></div>
+</div>
+
+<div class="step-nav" id="snav"></div>
+<div id="scards"></div>
+
+<div class="confetti-wrap" id="celebration">
+  <div class="confetti-big">🎉🐾🎊</div>
+  <h2>Bravo, tous les exercices testés !</h2>
+  <p>Ton chien est sur la bonne voie pour un rappel fiable. La formation complète t'attend pour aller encore plus loin !</p>
+  <a class="final-cta" href="https://www.skool.com/lacademie-dogs-us-8505/classroom" target="_blank">🚀 Rejoindre la formation Dogs &amp; Us</a>
+</div>
+
+</div>
+<script>
+const SKOOL='https://www.skool.com/lacademie-dogs-us-8505/classroom';
+
+const steps=[
+  {
+    id:'bases',label:"Les bases",emoji:"📋",tag:"AVANT DE COMMENCER",
+    title:"Les règles d'or du rappel",
+    intro:"Avant de commencer les exercices, quelques règles essentielles à garder en tête. Le rappel c'est l'une des choses les plus importantes que tu apprendras à ton chien — ça peut un jour lui sauver la vie.",
+    type:'rules',
+    rules:[
+      {icon:"🗣️",text:"<strong>Prénom + mot de rappel</strong> — Le prénom attire l'attention, la commande déclenche l'action. Exemple : « Kiki… Viens ! ». Un seul mot de rappel, toujours le même."},
+      {icon:"🚫",text:"<strong>Pas de répétitions</strong> — On appelle une seule fois. Si le chien ne vient pas, on utilise la laisse doucement. Répéter apprend au chien qu'il peut ignorer."},
+      {icon:"🎭",text:"<strong>Sois gaga !</strong> — Voix aiguë, tu t'abaisses, tu t'éloignes en courant si besoin. Plus tu es enthousiaste, plus ça attire. Surtout avec les chiots."},
+      {icon:"🍗",text:"<strong>Adapte la récompense au stimulus</strong> — Face à un autre chien, une croquette basique peut ne pas suffire. Jambon, fromage, jouet qui couine... adapte la valeur de la récompense."},
+      {icon:"❤️",text:"<strong>Le rappel = toujours positif</strong> — Ne rappelle jamais ton chien pour quelque chose de déplaisant (bain, fin de balade). Il associerait le rappel à quelque chose de mauvais."},
+      {icon:"🎯",text:"<strong>La friandise est une récompense, pas un leurre</strong> — Tu peux la montrer les 2 premières fois. Ensuite elle doit être cachée — sinon sans la voir, il ne reviendra jamais."}
+    ],
+    cta:{title:"Tu veux voir le rappel démontré en vidéo ?",desc:"Dans la formation, chaque exercice est filmé en situation réelle avec un vrai chien.",label:"Accéder aux vidéos de la formation →"}
+  },
+  {
+    id:'maison',label:"À la maison",emoji:"🏠",tag:"ÉTAPE 1",
+    title:"Les exercices à la maison",
+    intro:"On commence toujours dans un environnement calme, sans distractions. La maison est parfaite. C'est là que le chien va comprendre le concept du rappel avant de le pratiquer dehors.",
+    type:'exos',env:['maison'],
+    exercises:[
+      {id:'m1',title:"Le rappel avec laisse",body:"Équipe ton chien de son harnais et d'une laisse. Place-toi d'un côté de la pièce. Appelle avec prénom + mot de rappel. S'il vient → récompense immédiatement. S'il ne comprend pas → traction douce sur la laisse. Dès qu'il met du mouvement vers toi → relâche la traction. À l'arrivée → friandise. Répète 5 à 10 min par jour jusqu'à ce que ce soit automatique.",tip:"La traction est douce et continue — pas un coup sec. L'objectif c'est d'orienter, pas de forcer."},
+      {id:'m2',title:"Le rappel avec distraction (friandise)",body:"Une personne tient une friandise poing fermé et la présente au chien sans la donner. Si tu es seul·e, dépose-la au sol loin du chien en la lui montrant. Le chien veut aller la chercher → tu l'appelles. S'il revient → vous allez chercher la friandise ensemble. S'il ne revient pas → traction douce sur la laisse.",tip:"Aller chercher la friandise ensemble est une super récompense sociale en plus de la friandise elle-même."},
+      {id:'m3',title:"Le rappel avec distraction (balle)",body:"Tiens ton chien en laisse. Lance une balle. Il veut y aller → tu bloques la laisse. Tu l'appelles → s'il revient → grosse récompense. S'il ne revient pas → traction douce. C'est le plus difficile des trois car la balle est une distraction très motivante !",tip:"Si c'est trop difficile, lance la balle moins loin ou utilise un jouet moins excitant pour débuter."}
+    ],
+    cta:{title:"Tu veux voir ces exercices filmés à la maison ?",desc:"Dans la formation, chaque exercice est démontré en vidéo. Voir le timing exact de la récompense change tout.",label:"Accéder aux vidéos de la formation →"}
+  },
+  {
+    id:'exterieur',label:"En extérieur",emoji:"🌿",tag:"ÉTAPE 2",
+    title:"Passer en extérieur calme",
+    intro:"Les exercices de la maison fonctionnent bien ? C'est le moment de passer dehors, dans un endroit calme. On utilise une longe de 10m pour donner plus de liberté.",
+    type:'exos',env:['exterieur'],
+    infoBox:"📍 Choisis un endroit calme pour commencer — peu de chiens, peu de bruit. L'objectif est de réussir facilement avant d'augmenter la difficulté.",
+    exercises:[
+      {id:'e1',title:"La longe de 10m",body:"Prends une longe de 10 mètres. Laisse ton chien renifler et faire ses affaires librement. Quand il est à distance, rappelle-le une seule fois. S'il revient → grosse récompense, célèbre ! S'il ne revient pas → traction douce sur la longe jusqu'à ce qu'il amorce le mouvement, puis relâche et récompense à l'arrivée.",tip:"Ne répète pas l'appel plusieurs fois. Une fois, puis la longe si nécessaire. La répétition apprend au chien qu'il peut ignorer."},
+      {id:'e2',title:"Augmenter la difficulté progressivement",body:"Au fil des séances, tu peux lâcher la longe au sol (elle traîne sans que tu la tienne), puis tenter le rappel face à des odeurs intéressantes, puis face à des congénères au loin. Augmente toujours la difficulté d'un cran à la fois. Si une étape est trop difficile → reviens à la précédente.",tip:"Lâcher la longe au sol est une étape intermédiaire importante avant le rappel sans laisse."},
+      {id:'e3',title:"Vers le rappel sans laisse",body:"Quand le rappel est fiable avec la longe qui traîne dans des endroits modérément stimulants, tu peux commencer à tester sans laisse — uniquement dans des espaces sécurisés et fermés. Jamais près d'une route.",tip:"Jambon, fromage, jouet qui couine... face à un autre chien, une croquette basique peut ne pas suffire. Adapte toujours la récompense au niveau du stimulus !"}
+    ],
+    cta:{title:"Tu veux voir le travail à la longe en vidéo ?",desc:"Dans la formation, les séances en extérieur sont filmées en conditions réelles — avec les vrais imprévus.",label:"Accéder aux vidéos de la formation →"}
+  },
+  {
+    id:'stimuli',label:"Avec stimuli",emoji:"🌆",tag:"ÉTAPE 3",
+    title:"Le rappel face aux stimuli",
+    intro:"Ton chien rappelle bien en extérieur calme ? C'est le moment d'introduire de vrais stimuli : autres chiens, odeurs fortes, environnements animés. C'est l'étape la plus exigeante — adapte toujours la récompense.",
+    type:'exos',env:['exterieur','stimuli'],
+    infoBox:"⚡ Si ton chien ignore une croquette face à un congénère, ce n'est pas de la mauvaise volonté — c'est que la distraction vaut plus que ta récompense. Monte en gamme : jambon, fromage, jouet qui couine !",
+    exercises:[
+      {id:'s1',title:"Évaluer le niveau de connexion",body:"Avant de rappeler face à un stimulus fort, teste d'abord une commande simple (assis, regard) pour évaluer la connexion avec toi. S'il répond → tu peux tenter le rappel. S'il ne répond pas du tout → le stimulus est trop fort aujourd'hui. Recule, augmente la distance.",tip:"La distance au stimulus est ton meilleur outil. Plus tu es loin, plus c'est facile. Rapproche-toi progressivement."},
+      {id:'s2',title:"Rappel face aux congénères",body:"Commence à distance confortable d'un autre chien. Laisse ton chien observer, puis rappelle-le. S'il revient → jackpot (jambon, fromage, jouet). S'il n'y arrive pas → augmente la distance. Ne force jamais un rappel que tu sais impossible — ça crée de mauvaises associations.",tip:"Un rappel réussi vaut mieux que dix rappels ratés. Crée les conditions du succès avant de demander."},
+      {id:'s3',title:"Rappel face aux odeurs et distractions",body:"Le nez de ton chien est son sens dominant — une odeur intéressante peut être plus motivante que toi. Laisse-le renifler quelques secondes, puis rappelle-le. S'il lève la tête et revient → célèbre ! Augmente progressivement le temps de reniflage avant de rappeler.",tip:"Autoriser le reniflage puis rappeler est plus efficace qu'interdire tout contact avec les odeurs."}
+    ],
+    cta:{title:"Le rappel face aux stimuli, c'est tout un art.",desc:"Dans la formation, Chloé filme des séances réelles avec distractions et montre exactement comment gérer les situations difficiles.",label:"Accéder aux vidéos de la formation →"}
+  }
+];
+
+const exoOpen={};
+const exoChecked={};
+steps.forEach(s=>{if(s.exercises)s.exercises.forEach(e=>{exoOpen[e.id]=false;exoChecked[e.id]=false;})});
+let current=0;
+
+function totalExos(){return steps.filter(s=>s.exercises).flatMap(s=>s.exercises).length}
+function totalChecked(){return Object.values(exoChecked).filter(Boolean).length}
+function stepChecked(s){return s.exercises?s.exercises.filter(e=>exoChecked[e.id]).length:0}
+function stepTotal(s){return s.exercises?s.exercises.length:0}
+
+function updateGlobal(){
+  const done=totalChecked(),total=totalExos();
+  const pct=Math.round(done/total*100);
+  document.getElementById('gp-bar').style.width=pct+'%';
+  document.getElementById('gp-label').textContent='Progression · '+done+' / '+total+' exercices';
+  document.getElementById('gp-xp').textContent='⭐ '+(done*10)+' XP';
+  const dots=document.getElementById('gp-dots');
+  dots.innerHTML='';
+  steps.filter(s=>s.exercises).forEach(s=>{
+    const d=document.createElement('div');
+    d.className='prog-dot'+(stepChecked(s)===stepTotal(s)&&stepTotal(s)>0?' done':'');
+    dots.appendChild(d);
+  });
+  if(done===total&&total>0) document.getElementById('celebration').classList.add('visible');
+}
+
+function renderNav(){
+  const nav=document.getElementById('snav');
+  nav.innerHTML='';
+  steps.forEach((s,i)=>{
+    const allDone=s.exercises&&stepChecked(s)===stepTotal(s)&&stepTotal(s)>0;
+    const el=document.createElement('div');
+    el.className='spill'+(i===current?' active':'')+(allDone?' done':'');
+    el.innerHTML=`<span class="sem">${s.emoji}</span><span class="slbl">${s.label}</span>`;
+    el.onclick=()=>{current=i;render();};
+    nav.appendChild(el);
+  });
+  setTimeout(()=>{
+    const active=nav.querySelector('.active');
+    if(active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },50);
+}
+
+function envBadge(env){
+  const map={maison:{label:'🏠 À la maison',cls:'maison'},exterieur:{label:'🌿 En extérieur',cls:'exterieur'},stimuli:{label:'⚡ Avec stimuli',cls:'stimuli'}};
+  return(env||[]).map(e=>`<span class="env-badge ${map[e].cls}">${map[e].label}</span>`).join('');
+}
+
+function renderCards(){
+  const wrap=document.getElementById('scards');
+  wrap.innerHTML='';
+  steps.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='step-card'+(i===current?' visible':'');
+    let inner='';
+    if(s.type==='rules'){
+      inner=`<div class="card">
+        <div class="shero">
+          <div class="shero-icon">${s.emoji}</div>
+          <div class="shero-text"><span class="stag">${s.tag}</span><h2>${s.title}</h2><p>${s.intro}</p></div>
+        </div>
+        <div class="slabel">Les règles essentielles</div>
+        <div class="rules-grid">${s.rules.map(r=>`<div class="rule-item"><span class="rule-icon">${r.icon}</span><span>${r.text}</span></div>`).join('')}</div>
+        <div class="cta-banner">
+          <span class="ctag">🎬 Formation Dogs &amp; Us</span>
+          <span class="cta-title">${s.cta.title}</span>
+          <span class="cta-desc">${s.cta.desc}</span>
+          <a class="cta-btn" href="${SKOOL}" target="_blank">🎬 ${s.cta.label}</a>
+        </div>
+        <div class="nav-row">
+          <button class="nbtn" disabled>← Précédent</button>
+          <button class="nbtn next" id="next-${i}">Suivant →</button>
+        </div>
+      </div>`;
+    } else {
+      const done=stepChecked(s),total=stepTotal(s),pct=Math.round(done/total*100);
+      inner=`<div class="card">
+        <div class="shero">
+          <div class="shero-icon">${s.emoji}</div>
+          <div class="shero-text"><span class="stag">${s.tag}</span><h2>${s.title}</h2><p>${s.intro}</p></div>
+        </div>
+        <div class="env-row">${envBadge(s.env)}</div>
+        ${s.infoBox?`<div class="info-box">${s.infoBox}</div>`:''}
+        <div class="slabel">Exercices</div>
+        <div class="exo-list">${s.exercises.map((e,ei)=>`
+          <div class="exo-item${exoOpen[e.id]?' open':''}" data-exo="${e.id}">
+            <div class="exo-head">
+              <div class="exo-num">${ei+1}</div>
+              <span class="exo-title">${e.title}</span>
+              <span class="exo-toggle">${exoOpen[e.id]?'Fermer':'Voir'}<em class="exo-arrow"> ▼</em></span>
+            </div>
+            <div class="exo-body${exoOpen[e.id]?' open':''}">
+              ${e.body}
+              ${e.tip?`<div class="exo-tip">💡 ${e.tip}</div>`:''}
+              <div class="exo-check-row${exoChecked[e.id]?' done':''}" data-chk="${e.id}">
+                <div class="exo-check-box">${exoChecked[e.id]?'✓':''}</div>
+                <label>J'ai testé cet exercice ✓</label>
+              </div>
+            </div>
+          </div>`).join('')}
+        </div>
+        <div class="local-prog">
+          <div class="lp-bar"><div class="lp-fill" style="width:${pct}%"></div></div>
+          <div class="lp-label"><span>${done}/${total} exercices testés</span><strong>${pct}%</strong></div>
+        </div>
+        <div class="cta-banner">
+          <span class="ctag">🎬 Formation Dogs &amp; Us</span>
+          <span class="cta-title">${s.cta.title}</span>
+          <span class="cta-desc">${s.cta.desc}</span>
+          <a class="cta-btn" href="${SKOOL}" target="_blank">🎬 ${s.cta.label}</a>
+        </div>
+        <div class="nav-row">
+          <button class="nbtn" id="prev-${i}" ${i===0?'disabled':''}>← Précédent</button>
+          <button class="nbtn next" id="next-${i}" ${i===steps.length-1?'disabled':''}>Suivant →</button>
+        </div>
+      </div>`;
+    }
+    div.innerHTML=inner;
+    wrap.appendChild(div);
+  });
+
+  document.querySelectorAll('.exo-item').forEach(item=>{
+    item.querySelector('.exo-head').addEventListener('click',()=>{
+      exoOpen[item.dataset.exo]=!exoOpen[item.dataset.exo];render();
+    });
+  });
+  document.querySelectorAll('.exo-check-row').forEach(row=>{
+    row.addEventListener('click',e=>{
+      e.stopPropagation();
+      exoChecked[row.dataset.chk]=!exoChecked[row.dataset.chk];render();
+    });
+  });
+  for(let i=0;i<steps.length;i++){
+    const p=document.getElementById('prev-'+i);
+    const n=document.getElementById('next-'+i);
+    if(p&&!p.disabled) p.onclick=()=>{current--;render();window.scrollTo({top:0,behavior:'smooth'});};
+    if(n&&!n.disabled) n.onclick=()=>{current++;render();window.scrollTo({top:0,behavior:'smooth'});};
+  }
+}
+
+function render(){renderNav();renderCards();updateGlobal();}
+render();
+</script>
+</body>
+</html>
