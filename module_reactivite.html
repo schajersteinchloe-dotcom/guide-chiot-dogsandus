@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprendre la réactivité · Dogs &amp; Us</title>
+</head>
+<body>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1e3a5f;
+  --coral:#e05a3a;
+  --coral-light:#fdf0ec;
+  --cream:#faf9f5;
+  --green:#4a8c3f;
+  --green-light:#eaf4e8;
+  --gold:#f5a623;
+  --border-r:14px;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--cream);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--navy);min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:0 0 4rem}
+
+.hero{text-align:center;padding:2rem 1rem 1.25rem}
+.hero-brand{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #e8e4dc;border-radius:30px;padding:5px 14px 5px 10px;margin-bottom:14px}
+.hero-brand span{font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.04em}
+.hero h1{font-size:clamp(20px,5vw,26px);font-weight:800;color:var(--navy);line-height:1.2;margin-bottom:8px}
+.hero h1 em{color:var(--coral);font-style:normal}
+.hero p{font-size:13px;color:#666;max-width:420px;margin:0 auto;line-height:1.6}
+
+.step-nav{display:flex;gap:6px;padding:0 1rem 1.25rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.step-nav::-webkit-scrollbar{display:none}
+.spill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;background:#fff;border:1.5px solid #e0dbd0;border-radius:12px;padding:7px 10px;cursor:pointer;transition:all .18s;min-width:68px;-webkit-tap-highlight-color:transparent;text-align:center}
+.spill .sem{font-size:16px}
+.spill .slbl{font-size:10px;font-weight:700;color:#999;white-space:nowrap;line-height:1.3}
+.spill.active{border-color:var(--navy);background:var(--navy)}
+.spill.active .slbl{color:#fff}
+
+.step-card{display:none;padding:0 1rem}
+.step-card.visible{display:block}
+.card{background:#fff;border-radius:var(--border-r);border:1.5px solid #e8e4dc;padding:1.25rem;margin-bottom:.875rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--coral)}
+
+.shero{display:flex;gap:11px;align-items:flex-start;margin-bottom:1.1rem}
+.shero-icon{width:46px;height:46px;min-width:46px;border-radius:12px;background:var(--coral-light);display:flex;align-items:center;justify-content:center;font-size:23px}
+.shero-text h2{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:3px;line-height:1.3}
+.stag{display:inline-block;background:var(--navy);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-bottom:4px;letter-spacing:.05em}
+.shero-text p{font-size:12px;color:#666;line-height:1.5}
+
+.slabel{font-size:9px;font-weight:800;letter-spacing:.1em;color:#bbb;text-transform:uppercase;margin-bottom:7px;margin-top:1.1rem;display:flex;align-items:center;gap:6px}
+.slabel::after{content:'';flex:1;height:1px;background:#f0ede6}
+
+.info-box{background:#f0f4f8;border-left:3px solid var(--navy);border-radius:0 10px 10px 0;padding:.85rem 1rem;margin-bottom:.875rem;font-size:12px;color:var(--navy);line-height:1.6}
+.info-box strong{display:block;font-size:13px;font-weight:800;margin-bottom:4px}
+.warn-box{background:#fff8f0;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:.85rem 1rem;margin-bottom:.875rem;font-size:12px;color:#7a5c1a;line-height:1.6}
+.warn-box strong{display:block;font-size:13px;font-weight:800;margin-bottom:4px;color:#7a5c1a}
+.red-box{background:#fff5f3;border-left:3px solid var(--coral);border-radius:0 10px 10px 0;padding:.85rem 1rem;margin-bottom:.875rem;font-size:12px;color:var(--coral);line-height:1.6}
+.red-box strong{display:block;font-size:13px;font-weight:800;margin-bottom:4px}
+
+.question-list{display:flex;flex-direction:column;gap:7px}
+.question-item{display:flex;gap:10px;align-items:flex-start;background:#f9f8f4;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--navy);line-height:1.5}
+.question-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+.type-grid{display:flex;flex-direction:column;gap:8px}
+.type-card{border-radius:12px;padding:1rem;border:1.5px solid}
+.type-card.peur{background:#fff5f3;border-color:#f5c4b3}
+.type-card.frustration{background:#fff8ec;border-color:#f5d89a}
+.type-card h3{font-size:13px;font-weight:800;margin-bottom:5px}
+.type-card.peur h3{color:var(--coral)}
+.type-card.frustration h3{color:#7a5c1a}
+.type-card p{font-size:12px;line-height:1.6;color:#555}
+.type-card ul{margin-top:6px;padding-left:14px;font-size:12px;color:#666;line-height:1.8}
+
+/* MAITRE CARDS */
+.maitre-grid{display:flex;flex-direction:column;gap:8px}
+.maitre-card{background:#f9f8f4;border:1.5px solid #ece9e1;border-radius:12px;padding:1rem;display:flex;gap:10px;align-items:flex-start}
+.maitre-card-icon{font-size:22px;flex-shrink:0}
+.maitre-card-text strong{font-size:12px;font-weight:800;color:var(--navy);display:block;margin-bottom:3px}
+.maitre-card-text p{font-size:12px;color:#666;line-height:1.5}
+
+/* EQUIPEMENT GRID */
+.equip-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:.5rem}
+.equip-item{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #e0dbd0;border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;color:var(--navy)}
+
+.zone-wrap{display:flex;flex-direction:column;align-items:center;margin:1rem 0}
+.zone-svg{width:100%;max-width:280px}
+.zone-legend{display:flex;flex-direction:column;gap:6px;margin-top:1rem;width:100%}
+.zone-legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--navy)}
+.zone-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+
+.acc-list{display:flex;flex-direction:column;gap:7px}
+.acc-item{background:#f9f8f4;border:1.5px solid #ece9e1;border-radius:11px;overflow:hidden;transition:border-color .2s}
+.acc-item.open{border-color:#c5d8f0}
+.acc-head{display:flex;align-items:center;gap:9px;padding:12px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;user-select:none;min-height:48px}
+.acc-head:active{background:#f0ede6}
+.acc-item.open .acc-head{background:#f0f4f8}
+.acc-num{width:24px;height:24px;min-width:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.acc-title{flex:1;font-size:12px;font-weight:600;color:var(--navy);line-height:1.3}
+.acc-toggle{display:flex;align-items:center;gap:4px;background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:5px 10px;border-radius:20px;flex-shrink:0;transition:all .2s;white-space:nowrap;min-height:28px}
+.acc-item.open .acc-toggle{background:#3a6db5}
+.acc-arrow{display:inline-block;transition:transform .25s;font-style:normal;font-size:10px}
+.acc-item.open .acc-arrow{transform:rotate(180deg)}
+.acc-body{padding:0 12px 14px 45px;font-size:12px;color:#555;line-height:1.7;display:none}
+.acc-body.open{display:block}
+.acc-tip{background:var(--green-light);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:6px 9px;margin-top:8px;font-size:11px;color:var(--green);font-weight:500;line-height:1.5}
+.acc-warn{background:#fff8ec;border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:6px 9px;margin-top:6px;font-size:11px;color:#7a5c1a;font-weight:500;line-height:1.5}
+
+.cta-banner{background:var(--navy);border-radius:var(--border-r);padding:1.1rem;margin-top:1.25rem;margin-bottom:.875rem;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.cta-banner::after{content:'🐾';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:40px;opacity:.08;pointer-events:none}
+.ctag{font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--gold);text-transform:uppercase}
+.cta-title{font-size:13px;font-weight:800;color:#fff;line-height:1.4}
+.cta-desc{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5}
+.cta-btn{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:var(--navy);font-size:12px;font-weight:800;padding:10px 16px;border-radius:25px;border:none;cursor:pointer;align-self:flex-start;text-decoration:none;-webkit-tap-highlight-color:transparent;min-height:40px}
+.cta-btn:active{opacity:.9}
+
+.coaching-cta{background:var(--coral-light);border:1.5px solid #f5c4b3;border-radius:12px;padding:1rem;margin-top:1rem;display:flex;flex-direction:column;gap:8px}
+.coaching-cta strong{font-size:13px;font-weight:800;color:var(--coral);display:block}
+.coaching-cta p{font-size:12px;color:#888;line-height:1.5}
+.coaching-btn{display:inline-flex;align-items:center;gap:5px;background:var(--coral);color:#fff;font-size:12px;font-weight:800;padding:9px 16px;border-radius:25px;border:none;cursor:pointer;align-self:flex-start;text-decoration:none;-webkit-tap-highlight-color:transparent}
+
+.nav-row{display:flex;gap:8px;margin-top:.875rem}
+.nbtn{flex:1;padding:12px 12px;border-radius:11px;border:1.5px solid #e0dbd0;background:#fff;color:var(--navy);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;min-height:44px}
+.nbtn:active{background:#f5f3ef}
+.nbtn:disabled{opacity:.3;cursor:default}
+.nbtn.next{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+@media(min-width:480px){
+  .hero{padding:2.5rem 1.5rem 1.5rem}
+  .card{padding:1.5rem}
+  .shero-icon{width:50px;height:50px;font-size:25px}
+  .shero-text h2{font-size:17px}
+  .shero-text p{font-size:13px}
+  .acc-body,.question-item,.type-card p,.type-card ul,.maitre-card-text p{font-size:13px}
+  .acc-title{font-size:13px}
+  .step-nav{justify-content:center}
+}
+</style>
+
+<div class="wrap">
+<div class="hero">
+  <div class="hero-brand">
+    <span style="font-size:17px">🐾</span>
+    <span>DOGS & US · Module gratuit</span>
+  </div>
+  <h1>Comprendre<br><em>la réactivité</em> ⚡</h1>
+  <p>La réactivité se travaille différemment pour chaque chien. Ce module t'aide à comprendre, identifier et avancer à ton rythme.</p>
+</div>
+
+<div class="step-nav" id="snav"></div>
+<div id="scards"></div>
+</div>
+
+<script>
+const SKOOL='https://www.skool.com/lacademie-dogs-us-8505/classroom';
+const accOpen={};
+let current=0;
+
+const steps=[
+  {id:'comprendre',label:"Comprendre",emoji:"🧠",tag:"AVANT TOUT",title:"C'est quoi la réactivité ?",intro:"La réactivité, c'est quand ton chien réagit de manière excessive à un stimulus : il aboie, tire, grogne... Ce n'est jamais de la méchanceté. C'est une émotion qui déborde. Et comme chaque chien est différent, il n'existe pas de protocole universel — mais il y a une logique commune à comprendre.",content:'comprendre'},
+  {id:'maitre',label:"Le maître",emoji:"🧘",tag:"ÉTAPE CLÉE",title:"Toi aussi, tu fais partie de l'équation",intro:"Avant de travailler sur ton chien, il y a quelqu'un d'autre à prendre en compte : toi. Ton état émotionnel pendant la balade a un impact direct sur le comportement de ton chien.",content:'maitre'},
+  {id:'etape1',label:"Étape 1",emoji:"🔍",tag:"ÉTAPE 1",title:"Comprendre pourquoi ton chien est réactif",intro:"Avant de mettre quoi que ce soit en place, il faut d'abord observer et comprendre. Un chien réactif par peur ne se travaille pas de la même façon qu'un chien réactif par frustration.",content:'etape1'},
+  {id:'etape2',label:"Étape 2",emoji:"🎯",tag:"ÉTAPE 2",title:"Trouver la zone de confort",intro:"Une fois que tu as identifié le ou les stimuli qui déclenchent la réactivité, il faut trouver la distance à laquelle ton chien arrive encore à se maîtriser. C'est ce qu'on appelle la zone de confort.",content:'etape2'},
+  {id:'etape3',label:"Étape 3",emoji:"🤝",tag:"ÉTAPE 3",title:"Apprendre le renoncement",intro:"Ton chien est dans sa zone de confort et peut se maîtriser ? C'est maintenant qu'on commence à travailler. L'objectif : lui apprendre que renoncer au stimulus, c'est gagner.",content:'etape3'},
+  {id:'etape4',label:"Étape 4",emoji:"📈",tag:"ÉTAPE 4",title:"Réintroduire progressivement",intro:"Le chien maîtrise le renoncement dans sa zone verte ? On peut commencer à réduire la distance, très progressivement. C'est le travail le plus long — et le plus délicat.",content:'etape4'}
+];
+
+function buildContent(s){
+  if(s.content==='comprendre') return `
+    <div class="warn-box">
+      <strong>⚠️ Ce module est différent des autres</strong>
+      Il n'y a pas d'exercices précis à suivre ici. La réactivité dépend de chaque chien, de son histoire, de ses émotions et de son environnement. Ce qui fonctionne pour l'un ne fonctionnera peut-être pas pour l'autre. Ce module te donne une trame de compréhension — pas une recette.
+    </div>
+    <div class="slabel">Les deux grandes causes</div>
+    <div class="type-grid">
+      <div class="type-card peur">
+        <h3>😨 La peur</h3>
+        <p>Ton chien est effrayé par quelque chose et réagit pour faire fuir la menace ou s'en éloigner. Son comportement dit : <em>"Va-t'en, je ne veux pas de toi."</em></p>
+        <ul>
+          <li>Aboiements en reculant</li>
+          <li>Corps tendu, oreilles en arrière</li>
+          <li>Cherche à fuir si possible</li>
+          <li>Réagit souvent par surprise</li>
+        </ul>
+      </div>
+      <div class="type-card frustration">
+        <h3>😤 La frustration / excitation</h3>
+        <p>Ton chien veut accéder à quelque chose mais ne peut pas à cause de la laisse. Il réagit par frustration. Son comportement dit : <em>"Je veux y aller !"</em></p>
+        <ul>
+          <li>Aboiements en avançant, tire fort</li>
+          <li>Corps vers l'avant, queue haute</li>
+          <li>Se calme souvent dès qu'il est libéré</li>
+          <li>Réactif surtout en laisse</li>
+        </ul>
+      </div>
+    </div>
+    <div class="red-box" style="margin-top:1rem">
+      <strong>🚫 Les sanctions sont proscrites</strong>
+      Punir un chien réactif aggrave presque toujours la situation. Le chien n'apprend pas à gérer son émotion — il apprend à l'associer à quelque chose de négatif en plus. Et si tu as l'habitude de dire « non », « stop » ou « chut » face aux réactions → supprime-les pendant toute la période de travail.
+    </div>
+    <div class="cta-banner">
+      <span class="ctag">🎓 Formation Dogs & Us</span>
+      <span class="cta-title">Tu veux aller plus loin sur la gestion des émotions ?</span>
+      <span class="cta-desc">Un module complet sur la gestion émotionnelle est disponible dans la formation, avec des exercices filmés en situation réelle.</span>
+      <a class="cta-btn" href="${SKOOL}" target="_blank">🎬 Accéder à la formation →</a>
+    </div>`;
+
+  if(s.content==='maitre') return `
+    <div class="info-box">
+      <strong>🧠 Ton chien te lit en permanence</strong>
+      Les chiens sont des experts de la communication non-verbale. Ils perçoivent ta tension musculaire, ta respiration, ta démarche. Si tu es stressé à l'idée de croiser un autre chien, ton chien le sait avant même que tu le voies. Et ce stress qu'il capte peut déclencher ou amplifier sa propre réaction.
+    </div>
+    <div class="slabel">Comprendre ton propre stress</div>
+    <div class="maitre-grid">
+      <div class="maitre-card">
+        <span class="maitre-card-icon">💛</span>
+        <div class="maitre-card-text">
+          <strong>Ton émotion est normale</strong>
+          <p>Avoir peur que ton chien réagisse, anticiper les croisements, être sur le qui-vive en balade — c'est une réponse tout à fait humaine. Tu n'as pas à en avoir honte. Ce stress est légitime, surtout si ton chien a des réactions imprévisibles ou intenses.</p>
+        </div>
+      </div>
+      <div class="maitre-card">
+        <span class="maitre-card-icon">📚</span>
+        <div class="maitre-card-text">
+          <strong>Plus de compréhension = moins d'inquiétude</strong>
+          <p>Plus tu comprends ton chien — ses signaux de tension, ses déclencheurs, les situations qu'il gère bien ou mal — moins tu anticipes dans le vide. Observer, analyser, noter ses réactions : tout ça réduit l'incertitude et donc ton stress.</p>
+        </div>
+      </div>
+      <div class="maitre-card">
+        <span class="maitre-card-icon">📏</span>
+        <div class="maitre-card-text">
+          <strong>La distance, c'est aussi pour toi</strong>
+          <p>Prendre de la distance avec le stimulus, ce n'est pas seulement pour mettre le chien dans sa zone de confort. C'est aussi pour que toi, tu te sentes en sécurité. Un maître serein transmet de la sérénité. Garde la distance qui te permet de te sentir en contrôle.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slabel">Mets toutes les chances de ton côté</div>
+    <div class="info-box">
+      <strong>🛡️ L'équipement adapté = moins de stress pour toi</strong>
+      Si tu doutes de ta capacité à retenir ou contrôler ton chien en cas de réaction forte, l'équipement peut faire toute la différence — pas pour punir, mais pour te sentir plus en sécurité et transmettre cette sérénité à ton chien.
+    </div>
+    <div class="equip-grid">
+      <div class="equip-item">🦺 Harnais adapté</div>
+      <div class="equip-item">🔗 Double attache</div>
+      <div class="equip-item">😮 Muselière</div>
+      <div class="equip-item">📏 Longe courte</div>
+      <div class="equip-item">🎯 Collier de contrôle</div>
+    </div>
+    <div class="warn-box" style="margin-top:1rem">
+      <strong>💡 La muselière, pas une punition</strong>
+      Si ton chien a des réactions intenses et que tu ne peux pas anticiper tous les croisements, mettre une muselière le temps du travail est une décision responsable. Ça te permet de te relâcher, d'être moins tendu, et donc d'être un meilleur guide pour ton chien pendant les séances.
+    </div>
+    <div class="slabel">C'est un travail à faire aussi sur toi</div>
+    <div class="maitre-grid">
+      <div class="maitre-card">
+        <span class="maitre-card-icon">👀</span>
+        <div class="maitre-card-text">
+          <strong>Observe avant de réagir</strong>
+          <p>Quand tu croises un stimulus, prends l'habitude d'observer ton chien avant de faire quoi que ce soit. À quel moment se tend-il ? Est-ce que ses oreilles bougent ? Son regard change ? Ces micro-signaux te donnent une longueur d'avance.</p>
+        </div>
+      </div>
+      <div class="maitre-card">
+        <span class="maitre-card-icon">🌬️</span>
+        <div class="maitre-card-text">
+          <strong>Respire et détends la laisse</strong>
+          <p>Une laisse tendue en anticipation communique la tension à ton chien. Prends conscience de ta main, de tes épaules. Respire. Une laisse détendue dit : "il n'y a pas de danger". C'est un message puissant pour ton chien.</p>
+        </div>
+      </div>
+    </div>
+    <div class="coaching-cta">
+      <strong>📞 Tu te sens dépassé en balade ?</strong>
+      <p>Gérer ses propres émotions tout en guidant un chien réactif, c'est vraiment difficile seul. Un coaching 1-1 avec Chloé peut t'aider à reprendre confiance et à avancer ensemble.</p>
+      <a class="coaching-btn" href="${SKOOL}" target="_blank">Réserver un coaching individuel →</a>
+    </div>`;
+
+  if(s.content==='etape1') return `
+    <div class="slabel">Les questions à se poser</div>
+    <div class="question-list">
+      <div class="question-item"><span class="question-icon">🎯</span><span><strong>À quoi réagit-il exactement ?</strong> Autres chiens, vélos, trottinettes, joggeurs, enfants, bruits... Sois précis.</span></div>
+      <div class="question-item"><span class="question-icon">😨</span><span><strong>C'est de la peur ou de la frustration ?</strong> Il recule ou il fonce ? Il cherche à fuir ou à atteindre ?</span></div>
+      <div class="question-item"><span class="question-icon">🏠</span><span><strong>Est-il stressé au quotidien ?</strong> Un chien chroniquement stressé à la maison sera plus réactif dehors. L'environnement de vie compte autant que les séances de travail.</span></div>
+      <div class="question-item"><span class="question-icon">🎭</span><span><strong>Gère-t-il ses émotions ?</strong> A-t-il déjà appris à se calmer, à renoncer à quelque chose ? Si non, c'est par là qu'on commence.</span></div>
+      <div class="question-item"><span class="question-icon">📍</span><span><strong>Dans quel contexte réagit-il ?</strong> Uniquement en laisse ? En liberté aussi ? Seulement avec certaines personnes ?</span></div>
+    </div>
+    <div class="info-box" style="margin-top:1rem">
+      <strong>💡 Prends le temps d'observer</strong>
+      Avant de mettre quoi que ce soit en place, passe quelques jours à noter les réactions de ton chien. Quand, où, face à quoi, comment. Plus tu es précis sur le déclencheur, plus le travail sera efficace.
+    </div>
+    <div class="coaching-cta">
+      <strong>📞 Tu as du mal à identifier la cause ?</strong>
+      <p>Parfois c'est difficile de comprendre seul ce qui se passe. Un coaching 1-1 avec Chloé permet d'analyser la situation de ton chien précisément et de construire un plan adapté.</p>
+      <a class="coaching-btn" href="${SKOOL}" target="_blank">Réserver un coaching individuel →</a>
+    </div>`;
+
+  if(s.content==='etape2') return `
+    <div class="info-box">
+      <strong>🎯 C'est quoi la zone de confort ?</strong>
+      C'est la distance minimale à laquelle ton chien peut voir le stimulus sans basculer dans la réaction. À cette distance, il est encore capable de te regarder, de prendre une friandise, de répondre à une commande simple.
+    </div>
+    <div class="slabel">La visualisation des zones</div>
+    <div class="zone-wrap">
+      <svg class="zone-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="140" cy="140" r="120" fill="#eaf4e8" stroke="#b8d4b5" stroke-width="2"/>
+        <circle cx="140" cy="140" r="80" fill="#fff8ec" stroke="#f5d89a" stroke-width="2"/>
+        <circle cx="140" cy="140" r="40" fill="#fff5f3" stroke="#f5c4b3" stroke-width="2"/>
+        <text x="140" y="145" text-anchor="middle" font-size="20" font-family="sans-serif">🐕</text>
+        <text x="140" y="185" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#e05a3a" font-weight="700">ZONE ROUGE</text>
+        <text x="140" y="225" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#7a5c1a" font-weight="700">ZONE ORANGE</text>
+        <text x="140" y="258" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#4a8c3f" font-weight="700">ZONE VERTE ✓</text>
+        <text x="140" y="30" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#666">⚡ Stimulus</text>
+        <line x1="140" y1="38" x2="140" y2="100" stroke="#ccc" stroke-width="1.5" stroke-dasharray="4"/>
+      </svg>
+      <div class="zone-legend">
+        <div class="zone-legend-item"><div class="zone-dot" style="background:#e05a3a"></div><span><strong>Zone rouge</strong> — Trop proche. Le chien est dépassé, il ne peut pas apprendre. On ne travaille jamais ici.</span></div>
+        <div class="zone-legend-item"><div class="zone-dot" style="background:#f5a623"></div><span><strong>Zone orange</strong> — Le chien voit le stimulus, est attiré, mais peut encore se contrôler avec effort. On peut y travailler brièvement.</span></div>
+        <div class="zone-legend-item"><div class="zone-dot" style="background:#4a8c3f"></div><span><strong>Zone verte ✓</strong> — Zone de confort. Le chien peut voir le stimulus, rester connecté à toi et apprendre. C'est ici qu'on travaille.</span></div>
+      </div>
+    </div>
+    <div class="warn-box">
+      <strong>⚡ Comment trouver la zone verte ?</strong>
+      Approche-toi du stimulus par petits pas. Dès que ton chien commence à fixer intensément, à ignorer les friandises ou à se tendre — tu es en zone orange ou rouge. Recule jusqu'à ce qu'il se décontracte. C'est là ta zone verte du moment.
+    </div>
+    <div class="coaching-cta">
+      <strong>📞 La zone de confort est très grande ou introuvable ?</strong>
+      <p>Certains chiens sont tellement réactifs que travailler seul est difficile voire contre-productif. Un coaching 1-1 avec Chloé peut faire toute la différence.</p>
+      <a class="coaching-btn" href="${SKOOL}" target="_blank">Réserver un coaching individuel →</a>
+    </div>`;
+
+  if(s.content==='etape3') return `
+    <div class="info-box">
+      <strong>🤝 C'est quoi le renoncement ?</strong>
+      Apprendre au chien que détourner son attention du stimulus et revenir vers toi, c'est la meilleure décision qu'il puisse prendre. Renoncer au stimulus → connexion avec toi → récompense. Petit à petit, il choisit toi plutôt que la réaction.
+    </div>
+    <div class="slabel">Comment ça fonctionne</div>
+    <div class="acc-list">
+      <div class="acc-item" data-acc="r1">
+        <div class="acc-head"><div class="acc-num">1</div><span class="acc-title">Placer le chien dans sa zone verte</span><span class="acc-toggle">Lire <em class="acc-arrow"> ▼</em></span></div>
+        <div class="acc-body">On commence toujours dans la zone de confort identifiée à l'étape 2. Le chien voit le stimulus mais peut encore se maîtriser. C'est la condition sine qua non pour que l'apprentissage soit possible.<div class="acc-tip">💡 Si le chien est déjà dans le rouge dès le départ, recule. On ne force jamais.</div></div>
+      </div>
+      <div class="acc-item" data-acc="r2">
+        <div class="acc-head"><div class="acc-num">2</div><span class="acc-title">Récompenser la connexion naturelle</span><span class="acc-toggle">Lire <em class="acc-arrow"> ▼</em></span></div>
+        <div class="acc-body">Dès que le chien regarde le stimulus puis te regarde toi spontanément → récompense immédiatement. Ce moment de connexion naturelle est de l'or. Il dit : "J'ai vu quelque chose, mais j'ai choisi de revenir vers toi."<div class="acc-tip">💡 Utilise des friandises de haute valeur — jambon, fromage, poulet. Le stimulus est concurrent, ta récompense doit gagner.</div></div>
+      </div>
+      <div class="acc-item" data-acc="r3">
+        <div class="acc-head"><div class="acc-num">3</div><span class="acc-title">Maintenir la connexion, réduire la distance</span><span class="acc-toggle">Lire <em class="acc-arrow"> ▼</em></span></div>
+        <div class="acc-body">Au fil des séances, quand le chien gère bien sa zone verte, tu peux avancer d'un tout petit pas vers le stimulus. Si ça se passe bien → on continue très progressivement. Si le chien bascule → on recule, pas de pression.<div class="acc-warn">⚠️ Ce travail prend des semaines, parfois des mois. Il y aura des hauts et des bas — c'est normal et attendu.</div></div>
+      </div>
+    </div>
+    <div class="red-box" style="margin-top:1rem">
+      <strong>🚫 Supprimer "non", "stop", "chut"</strong>
+      Pendant toute la période de travail, ces mots n'ont pas leur place. Le chien doit d'abord apprendre ce qu'on attend de lui — pas recevoir une réprimande pour quelque chose qu'il ne sait pas encore faire autrement.
+    </div>
+    <div class="cta-banner">
+      <span class="ctag">🎓 Formation Dogs & Us</span>
+      <span class="cta-title">Les exercices de gestion émotionnelle en vidéo</span>
+      <span class="cta-desc">Un module complet dédié dans la formation — avec les exercices filmés en situation réelle.</span>
+      <a class="cta-btn" href="${SKOOL}" target="_blank">🎬 Accéder à la formation →</a>
+    </div>`;
+
+  if(s.content==='etape4') return `
+    <div class="info-box">
+      <strong>📈 Réintroduire, c'est quoi concrètement ?</strong>
+      C'est rapprocher progressivement le chien du stimulus, en maintenant la connexion et le renoncement appris à l'étape 3. L'objectif à long terme : que le chien puisse croiser le stimulus sans réaction excessive, même à courte distance.
+    </div>
+    <div class="slabel">Les principes à garder en tête</div>
+    <div class="acc-list">
+      <div class="acc-item" data-acc="p1">
+        <div class="acc-head"><div class="acc-num">1</div><span class="acc-title">Éviter le plus d'échecs possible</span><span class="acc-toggle">Lire <em class="acc-arrow"> ▼</em></span></div>
+        <div class="acc-body">Chaque fois que ton chien réagit fortement, ça renforce le comportement réactif. L'objectif est donc de créer les conditions pour qu'il réussisse — en gérant la distance, en choisissant les bons moments, en anticipant.<div class="acc-tip">💡 Mieux vaut annuler une séance que la faire dans de mauvaises conditions.</div></div>
+      </div>
+      <div class="acc-item" data-acc="p2">
+        <div class="acc-head"><div class="acc-num">2</div><span class="acc-title">Gérer les imprévus en ville</span><span class="acc-toggle">Lire <em class="acc-arrow"> ▼</em></span></div>
+        <div class="acc-body">En ville, croiser des stimuli est quasi inévitable. Quand ça arrive de façon inattendue : utilise des friandises de haute valeur pour détourner l'attention, change de trottoir si nécessaire, mets de la distance. Tu fais au mieux avec ce que tu as — ce n'est pas un échec.<div class="acc-tip">💡 Avoir toujours des friandises de haute valeur sur soi en balade, c'est indispensable pendant cette période.</div></div>
+      </div>
+      <div class="acc-item" data-acc="p3">
+        <div class="acc-head"><div class="acc-num">3</div><span class="acc-title">Accepter les hauts et les bas</span><span class="acc-toggle">Lire <em class="acc-arrow"> ▼</em></span></div>
+        <div class="acc-body">La progression n'est jamais linéaire. Ton chien peut très bien gérer pendant une semaine, puis avoir une mauvaise journée. C'est normal. La fatigue, le stress, la météo — tout ça peut influencer. Regarde la tendance sur plusieurs semaines, pas les résultats jour par jour.<div class="acc-warn">⚠️ Ce travail demande de la constance tous les jours — pas des séances intensives de temps en temps.</div></div>
+      </div>
+    </div>
+    <div class="warn-box" style="margin-top:1rem">
+      <strong>⏳ Combien de temps ça prend ?</strong>
+      Il n'y a pas de réponse universelle. Certains chiens progressent en quelques semaines, d'autres ont besoin de plusieurs mois. Cela dépend de l'intensité de la réactivité, de l'histoire du chien et de la régularité du travail. La patience est non négociable.
+    </div>
+    <div class="cta-banner">
+      <span class="ctag">🎓 Formation Dogs & Us</span>
+      <span class="cta-title">Module complet gestion émotionnelle + réactivité</span>
+      <span class="cta-desc">Exercices filmés, protocoles détaillés et espace communauté pour poster les vidéos de ton chien et recevoir un retour de Chloé.</span>
+      <a class="cta-btn" href="${SKOOL}" target="_blank">🎬 Accéder à la formation →</a>
+    </div>
+    <div class="coaching-cta">
+      <strong>📞 La réactivité de ton chien est intense ?</strong>
+      <p>Certaines réactivités nécessitent un accompagnement personnalisé. Un coaching 1-1 avec Chloé permet d'adapter le travail précisément à ton chien et à ta situation.</p>
+      <a class="coaching-btn" href="${SKOOL}" target="_blank">Réserver un coaching individuel →</a>
+    </div>`;
+
+  return '';
+}
+
+function renderNav(){
+  const nav=document.getElementById('snav');
+  nav.innerHTML='';
+  steps.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='spill'+(i===current?' active':'');
+    el.innerHTML=`<span class="sem">${s.emoji}</span><span class="slbl">${s.label}</span>`;
+    el.onclick=()=>{current=i;render();};
+    nav.appendChild(el);
+  });
+  setTimeout(()=>{
+    const active=nav.querySelector('.active');
+    if(active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },50);
+}
+
+function renderCards(){
+  const wrap=document.getElementById('scards');
+  wrap.innerHTML='';
+  steps.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='step-card'+(i===current?' visible':'');
+    div.innerHTML=`
+      <div class="card">
+        <div class="shero">
+          <div class="shero-icon">${s.emoji}</div>
+          <div class="shero-text">
+            <span class="stag">${s.tag}</span>
+            <h2>${s.title}</h2>
+            <p>${s.intro}</p>
+          </div>
+        </div>
+        ${buildContent(s)}
+        <div class="nav-row">
+          <button class="nbtn" id="prev-${i}" ${i===0?'disabled':''}>← Précédent</button>
+          <button class="nbtn next" id="next-${i}" ${i===steps.length-1?'disabled':''}>Suivant →</button>
+        </div>
+      </div>`;
+    wrap.appendChild(div);
+  });
+
+  document.querySelectorAll('.acc-item').forEach(item=>{
+    const id=item.dataset.acc;
+    if(accOpen[id]===undefined) accOpen[id]=false;
+    const head=item.querySelector('.acc-head');
+    const body=item.querySelector('.acc-body');
+    const toggle=item.querySelector('.acc-toggle');
+    const arrow=item.querySelector('.acc-arrow');
+    if(accOpen[id]){item.classList.add('open');body.classList.add('open');arrow.style.transform='rotate(180deg)';toggle.childNodes[0].textContent='Fermer ';}
+    head.addEventListener('click',()=>{
+      accOpen[id]=!accOpen[id];
+      item.classList.toggle('open',accOpen[id]);
+      body.classList.toggle('open',accOpen[id]);
+      arrow.style.transform=accOpen[id]?'rotate(180deg)':'rotate(0deg)';
+      toggle.childNodes[0].textContent=accOpen[id]?'Fermer ':'Lire ';
+    });
+  });
+
+  for(let i=0;i<steps.length;i++){
+    const p=document.getElementById('prev-'+i);
+    const n=document.getElementById('next-'+i);
+    if(p&&!p.disabled) p.onclick=()=>{current--;render();window.scrollTo({top:0,behavior:'smooth'});};
+    if(n&&!n.disabled) n.onclick=()=>{current++;render();window.scrollTo({top:0,behavior:'smooth'});};
+  }
+}
+
+function render(){renderNav();renderCards();}
+render();
+</script>
+</body>
+</html>
